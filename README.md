@@ -63,3 +63,9 @@ laravel new laravel-blog
 - PostStoreRequest와 유사한 Request 클래스에서 반복될 변환 로직을 BaseRequest로 추출
 - 공통 변환 로직을 BaseRequest에서 처리하여 코드 중복 제거
 - 모든 Request 클래스가 BaseRequest를 상속하도록 변경하여 일관성 유지
+
+## 8) FormRequest 검증 실패 시 커스텀 ErrorResponse 반환
+
+- 기본 422 응답 대신 앱에서 정의한 ErrorResponse 형식으로 검증 실패 응답 처리
+- bootstrap.app에서 withExceptions에 정의함.
+- 일관된 에러 응답 포맷을 유지

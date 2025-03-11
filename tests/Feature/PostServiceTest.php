@@ -64,11 +64,11 @@ class PostServiceTest extends TestCase
     public function test_포스트_생성(): void
     {
         // given
-        $request = new PostStoreRequest(
-            '포스트 제목',
-            '포스트 내용',
-            '포스트 작성자'
-        );
+        $request = new PostStoreRequest([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자'
+        ]);
 
         // when
         $response = $this->postService->save($request);

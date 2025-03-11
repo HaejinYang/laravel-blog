@@ -4,7 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class PostControllerTest extends TestCase
@@ -88,9 +89,9 @@ class PostControllerTest extends TestCase
         $response = $this->getJson("/api/posts/{$id}");
 
         // then
-        $response->assertStatus(ResponseAlias::HTTP_NOT_FOUND);
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertJson([
-            'code' => ResponseAlias::HTTP_NOT_FOUND,
+            'code' => Response::HTTP_NOT_FOUND,
             'message' => "존재하지 않는 글입니다."
         ]);
     }
@@ -108,7 +109,24 @@ class PostControllerTest extends TestCase
         $response = $this->postJson('/api/posts', $data);
 
         // then
-        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $response->assertStatus(Response::HTTP_OK);
         $this->assertEquals(1, Post::count());
+    }
+
+    public function test_포스트_올바르지못한_생성은_실패해야함(): void
+    {
+        // given
+        $data = [
+            'title' => Str::random(300),
+            'content' => 'This is a test content.',
+            'author' => Str::random(300),
+        ];
+
+        // when
+        $response = $this->postJson('/api/posts', $data);
+
+        // then
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $this->assertEquals(0, Post::count());
     }
 }
