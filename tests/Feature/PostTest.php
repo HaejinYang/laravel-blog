@@ -28,7 +28,7 @@ class PostTest extends TestCase
         ]);
 
         // when
-        $response = $this->get('/posts');
+        $response = $this->getJson('/api/posts');
 
         // then
         $data = $response->json();
@@ -49,7 +49,7 @@ class PostTest extends TestCase
         });
 
         // when
-        $response = $this->get('/posts');
+        $response = $this->getJson('/api/posts');
 
         // then
         $data = $response->json();
@@ -68,7 +68,7 @@ class PostTest extends TestCase
         $id = $post->id;
 
         // when
-        $response = $this->get("/posts/{$id}");
+        $response = $this->getJson("/api/posts/{$id}");
 
         // then
         $response->assertStatus(200);
@@ -85,7 +85,7 @@ class PostTest extends TestCase
         $id = 919191; // 없는 post id
 
         // when
-        $response = $this->get("/posts/{$id}");
+        $response = $this->getJson("/api/posts/{$id}");
 
         // then
         $response->assertStatus(ResponseAlias::HTTP_NOT_FOUND);

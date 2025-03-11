@@ -47,3 +47,9 @@ laravel new laravel-blog
 - Reflection을 활용하여 객체 속성을 자동으로 직렬화하도록 처리
 - 기존 응답 클래스를 BaseResponse를 상속하도록 변경
 - 중복된 jsonSerialize 구현 코드 제거
+
+## 5) web route에서 api route로 교체
+
+- Sanctum이 같이 설치되었는데, 일단은 사용안함
+- 경로가 /posts -> /api/posts로 일괄적으로 /api가 붙게됨
+- 
