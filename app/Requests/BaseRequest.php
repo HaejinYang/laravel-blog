@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use ReflectionClass;
 use ReflectionProperty;
 
+/**
+ * API 요청 클래스의 최상위 클래스. 모든 요청클래스는 BaseRequest를 상속해야 함.
+ */
 abstract class BaseRequest
 {
     public function __construct(array $data)

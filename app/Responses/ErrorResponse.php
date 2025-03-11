@@ -2,6 +2,10 @@
 
 namespace App\Responses;
 
+/**
+ * 에러 응답 전용 클래스.
+ * @see /bootstrap/app.php의 withExceptions
+ */
 class ErrorResponse extends BaseResponse
 {
     private int $code;
