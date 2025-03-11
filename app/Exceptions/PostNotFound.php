@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-class PostNotFound extends AppException
+class PostNotFound extends BaaseException
 {
     public function __construct()
     {

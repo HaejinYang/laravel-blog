@@ -1,6 +1,6 @@
 <?php
 
-use App\Exceptions\AppException;
+use App\Exceptions\BaaseException;
 use App\Responses\ErrorResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (AppException $e, Request $request) {
+        $exceptions->render(function (BaaseException $e, Request $request) {
             $message = $e->getMessage();
             $code = $e->getCode();
 

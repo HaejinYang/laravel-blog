@@ -69,3 +69,13 @@ laravel new laravel-blog
 - 기본 422 응답 대신 앱에서 정의한 ErrorResponse 형식으로 검증 실패 응답 처리
 - bootstrap.app에서 withExceptions에 정의함.
 - 일관된 에러 응답 포맷을 유지
+
+## 9) AppException 이름을 BaseException으로 변경
+
+프로젝트에서 사용하는 최상위 클래스들은 이름이 모두 Base... 로 시작한다.
+
+# 알아볼거
+
+- phpunit에서 컨트롤러 호출하는 원리
+- phpunit에서 use RefreshDatabase; 좀더 자세히
+- php의 static late binding과 reflection
