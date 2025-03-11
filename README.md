@@ -22,23 +22,28 @@ laravel new laravel-blog
 
 ## 1) 포스트 조회
 
-포스트 리소스 컨트롤러 생성 `php artisan make:controller PostController --resource`
+- 포스트 리소스 컨트롤러 생성 `php artisan make:controller PostController --resource`
 
-포스트 모델과 마이그레이션 생성 `php artisan make:model Post --migration`
+- 포스트 모델과 마이그레이션 생성 `php artisan make:model Post --migration`
 
-포스트 응답클래스 생성 `php artisan make:resource PostResource`
+- 포스트 응답클래스 생성 `php artisan make:resource PostResource`
 
-포스트 테스트 생성 `php artisan make:test PostTest`
+- 포스트 테스트 생성 `php artisan make:test PostTest`
 
-테스트를 위해 .env.testing 사용. php artisan test가 .env.testing을 먼저 인식함.
+- 테스트를 위해 .env.testing 사용. php artisan test가 .env.testing을 먼저 인식함.
 
-테스트엔 RefreshDatabase 트레잇을 사용하고(매 테스트마다 디비를 리셋함)
-속도를 위해 테스트 디비로 sqlite의 :memory:를사용
+- 테스트엔 RefreshDatabase 트레잇을 사용하고(매 테스트마다 디비를 리셋함)
+  속도를 위해 테스트 디비로 sqlite의 :memory:를사용
 
 ## 2) 응답 및 예외
 
-공용으로 사용할 예외, 에러 응답 상위 클래스 추가하고 적용.
+- 공용으로 사용할 예외, 에러 응답 상위 클래스 추가하고 적용.
 
 ## 3) 포스트 서비스 추가하고 글 조회 API에 새로운 응답과 예외 추가함.
 
-## 4)  
+## 4) BaseResponse 추가하여 JSON 직렬화 자동화
+
+- BaseResponse 클래스 생성 및 JsonSerializable 구현
+- Reflection을 활용하여 객체 속성을 자동으로 직렬화하도록 처리
+- 기존 응답 클래스를 BaseResponse를 상속하도록 변경
+- 중복된 jsonSerialize 구현 코드 제거

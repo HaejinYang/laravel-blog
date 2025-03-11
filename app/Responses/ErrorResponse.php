@@ -2,9 +2,7 @@
 
 namespace App\Responses;
 
-use JsonSerializable;
-
-class ErrorResponse implements JsonSerializable
+class ErrorResponse extends BaseResponse
 {
     private int $code;
     private string $message;
@@ -13,13 +11,5 @@ class ErrorResponse implements JsonSerializable
     {
         $this->code = $code;
         $this->message = $message;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'code' => $this->code,
-            'message' => $this->message
-        ];
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Responses;
 
 use App\Models\Post;
-use JsonSerializable;
 
-class PostResponse implements JsonSerializable
+class PostResponse extends BaseResponse
 {
     private string $title;
     private string $content;
@@ -16,14 +15,5 @@ class PostResponse implements JsonSerializable
         $this->title = $post->title;
         $this->content = $post->content;
         $this->author = $post->author;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'title' => $this->title,
-            'content' => $this->content,
-            'author' => $this->author,
-        ];
     }
 }
