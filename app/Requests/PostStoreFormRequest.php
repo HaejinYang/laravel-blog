@@ -25,4 +25,9 @@ class PostStoreFormRequest extends FormRequest
             'author' => 'required|string|max:100',
         ];
     }
+
+    public function toDto(): PostStoreRequest
+    {
+        return PostStoreRequest::fromArray($this);
+    }
 }

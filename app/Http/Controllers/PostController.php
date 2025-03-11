@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Requests\PostStoreFormRequest;
-use App\Requests\PostStoreRequest;
 use App\Responses\PostResponse;
 use App\Services\PostService;
 use Illuminate\Http\Request;
@@ -39,7 +38,7 @@ class PostController extends Controller
      */
     public function store(PostStoreFormRequest $request)
     {
-        $validated = PostStoreRequest::fromArray($request);
+        $validated = $request->toDto();
         $post = $this->postService->save($validated);
 
         return response()->json($post, Response::HTTP_OK);

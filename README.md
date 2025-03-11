@@ -52,4 +52,14 @@ laravel new laravel-blog
 
 - Sanctum이 같이 설치되었는데, 일단은 사용안함
 - 경로가 /posts -> /api/posts로 일괄적으로 /api가 붙게됨
-- 
+
+## 6) 포스트 생성 기능 추가
+
+- 포스트 생성 API 및 서비스 추가
+- 요청 인자 검증 후 타입 재지정을 위한 PostStoreRequest 추가
+
+## 7) BaseRequest 도입하여 요청 클래스 중복 코드 제거
+
+- PostStoreRequest와 유사한 Request 클래스에서 반복될 변환 로직을 BaseRequest로 추출
+- 공통 변환 로직을 BaseRequest에서 처리하여 코드 중복 제거
+- 모든 Request 클래스가 BaseRequest를 상속하도록 변경하여 일관성 유지

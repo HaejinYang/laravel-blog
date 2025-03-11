@@ -2,35 +2,9 @@
 
 namespace App\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class PostStoreRequest
+class PostStoreRequest extends BaseRequest
 {
-    public function __construct(
-        public string $title,
-        public string $content,
-        public string $author
-    )
-    {
-    }
-
-    public static function fromArray(FormRequest $formRequest): self
-    {
-        $data = $formRequest->validated();
-
-        return new self(
-            $data['title'],
-            $data['content'],
-            $data['author']
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'title' => $this->title,
-            'content' => $this->content,
-            'author' => $this->author,
-        ];
-    }
+    protected string $title;
+    protected string $content;
+    protected string $author;
 }
