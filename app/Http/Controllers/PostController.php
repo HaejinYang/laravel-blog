@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Requests\PostStoreFormRequest;
+use App\Requests\PostStoreRequest;
 use App\Responses\PostResponse;
 use App\Services\PostService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
@@ -34,9 +37,12 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostStoreFormRequest $request)
     {
-        //
+        $validated = PostStoreRequest::fromArray($request);
+        $post = $this->postService->save($validated);
+
+        return response()->json($post, Response::HTTP_OK);
     }
 
     public function show(string $postId): PostResponse

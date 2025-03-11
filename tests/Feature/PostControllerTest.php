@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Tests\TestCase;
 
-class PostTest extends TestCase
+class PostControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -93,5 +93,22 @@ class PostTest extends TestCase
             'code' => ResponseAlias::HTTP_NOT_FOUND,
             'message' => "존재하지 않는 글입니다."
         ]);
+    }
+
+    public function test_포스트_생성(): void
+    {
+        // given
+        $data = [
+            'title' => 'Test Post',
+            'content' => 'This is a test content.',
+            'author' => 'John Doe',
+        ];
+
+        // when
+        $response = $this->postJson('/api/posts', $data);
+
+        // then
+        $response->assertStatus(ResponseAlias::HTTP_OK);
+        $this->assertEquals(1, Post::count());
     }
 }

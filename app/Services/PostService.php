@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\PostNotFound;
 use App\Models\Post;
+use App\Requests\PostStoreRequest;
 use App\Responses\PostResponse;
 
 class PostService
@@ -22,6 +23,14 @@ class PostService
     public function getMany(): array
     {
         $response = Post::all()->map(fn($post) => new PostResponse($post))->toArray();
+
+        return $response;
+    }
+
+    public function save(PostStoreRequest $request): PostResponse
+    {
+        $post = Post::create($request->toArray());
+        $response = new PostResponse($post);
 
         return $response;
     }
