@@ -2,9 +2,8 @@
 
 namespace App\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 
-class PostStoreFormRequest extends FormRequest
+class PostStoreFormRequest extends BaseFormRequest
 {
     /**
      * 요청을 인증할지 여부
@@ -24,10 +23,5 @@ class PostStoreFormRequest extends FormRequest
             'content' => 'required|string',
             'author' => 'required|string|max:100',
         ];
-    }
-
-    public function toDto(): PostStoreRequest
-    {
-        return PostStoreRequest::fromArray($this);
     }
 }

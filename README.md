@@ -74,6 +74,13 @@ laravel new laravel-blog
 
 프로젝트에서 사용하는 최상위 클래스들은 이름이 모두 Base... 로 시작한다.
 
+## 10) FormRequest에서 DTO 변환 로직 자동화
+
+- BaseFormRequest에서 DTO 클래스를 자동으로 유추하도록 개선
+- 기존 `toDto()` 메서드에서 별도 DTO 클래스를 지정할 필요 없음
+- 네이밍 패턴을 기반으로 DTO 클래스를 감지하도록 구현
+-
+
 # 알아볼거
 
 - phpunit에서 컨트롤러 호출하는 원리
