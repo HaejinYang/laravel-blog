@@ -1,0 +1,4 @@
+vendor/
+mysqldata/
+node_modules/
+.idea/
