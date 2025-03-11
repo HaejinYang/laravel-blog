@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PostResource;
-use App\Models\Post;
+use App\Responses\PostResponse;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function __construct(
+        private PostService $postService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): array
     {
-        return PostResource::collection(Post::all());
+        $response = $this->postService->getMany();
+
+        return $response;
     }
 
     /**
@@ -32,12 +39,11 @@ class PostController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(string $postId): PostResponse
     {
-        //
+        $post = $this->postService->getOne($postId);
+
+        return $post;
     }
 
     /**
