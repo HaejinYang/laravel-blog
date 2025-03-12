@@ -38,7 +38,7 @@ class PostController extends Controller
      */
     public function store(PostStoreFormRequest $request)
     {
-        $validated = $request->toDto();
+        $validated = $request->toRequest();
         $post = $this->postService->save($validated);
 
         return response()->json($post, Response::HTTP_OK);

@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\Log;
 
 abstract class BaseFormRequest extends FormRequest
 {
-    public function toDto()
+    /**
+     * FormRequest 클래스에 대응하는 Request 클래스로 변환한다.
+     */
+    public function toRequest()
     {
-        $dtoClass = $this->detectDtoClass();
+        $dtoClass = $this->detectRequestClass();
         if (!class_exists($dtoClass)) {
             Log::error("Request 클래스를 찾을 수 없습니다. :{$dtoClass}");
             throw new InternelServerError();
@@ -19,7 +22,10 @@ abstract class BaseFormRequest extends FormRequest
         return $dtoClass::fromArray($this);
     }
 
-    protected function detectDtoClass(): string
+    /**
+     * FormRequest 클래스명으로 Request 클래스명을 유추한다.
+     */
+    protected function detectRequestClass(): string
     {
         // 현재 FormRequest 클래스명 가져오기
         $formRequestClass = static::class;
