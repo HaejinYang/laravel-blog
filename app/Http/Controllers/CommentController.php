@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Services\CommentService;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    public function __construct(private CommentService $commentService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -41,9 +46,11 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function show(string $commentId)
     {
-        //
+        $comment = $this->commentService->getOne($commentId);
+
+        return $comment;
     }
 
     /**

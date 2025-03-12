@@ -10,10 +10,10 @@ class Comment extends Model
         'author',
         'password',
         'content',
-        'postId'
+        'post_id'
     ];
 
-    private int $postId;
+    private int $post_id;
     private string $author;
     private string $password;
     private string $content;
