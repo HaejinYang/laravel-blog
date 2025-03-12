@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -31,13 +32,26 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // 검증 실패 시 커스텀 응답 반환
         $exceptions->render(function (Throwable $e, Request $request) {
-            $response = new ErrorResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
+            $response = null;
+            $code = Response::HTTP_INTERNAL_SERVER_ERROR;
+
             if ($e instanceof ValidationException) {
+                $code = Response::HTTP_BAD_REQUEST;
+                $response = new ErrorResponse($code, $e->getMessage());
                 foreach ($e->errors() as $field => $message) {
                     $response->addValidation($field, $message[0]);
                 }
             }
 
-            return response()->json($response, Response::HTTP_BAD_REQUEST);
+            if ($e instanceof NotFoundHttpException) {
+                $code = Response::HTTP_NOT_FOUND;
+                $response = new ErrorResponse($code, $e->getMessage());
+            }
+
+            if ($response === null) {
+                $response = new ErrorResponse(Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage());
+            }
+
+            return response()->json($response, $code);
         });
     })->create();

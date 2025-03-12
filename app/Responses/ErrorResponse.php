@@ -10,7 +10,6 @@ class ErrorResponse extends BaseResponse
 {
     private int $code;
     private string $message;
-
     private array $validations = [];
 
     public function __construct(int $code, string $message, $validations = [])
