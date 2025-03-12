@@ -11,12 +11,15 @@ use ReflectionProperty;
  */
 abstract class BaseRequest
 {
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
         foreach ($this->getProperties() as $property) {
             $name = $property->getName();
             if (isset($data[$name])) {
                 $property->setValue($this, $data[$name]);
+            } else {
+                $defaultValues = $this->defaultValues();
+                $this->$name = $defaultValues[$name] ?? null; // 기본값 설정
             }
         }
     }
@@ -39,5 +42,13 @@ abstract class BaseRequest
             $data[$name] = $this->$name;
         }
         return $data;
+    }
+
+    /**
+     * 상속받는 클래스에서 오버라이딩해서 프로퍼티의 기본값을 설정할 수 있음
+     */
+    protected function defaultValues(): array
+    {
+        return [];
     }
 }

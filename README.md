@@ -79,7 +79,11 @@ laravel new laravel-blog
 - BaseFormRequest에서 DTO 클래스를 자동으로 유추하도록 개선
 - 기존 `toDto()` 메서드에서 별도 DTO 클래스를 지정할 필요 없음
 - 네이밍 패턴을 기반으로 DTO 클래스를 감지하도록 구현
--
+
+## 11) BaseRequest 클래스에 기본값 적용 가능하도록 변경
+
+FormRequest 클래스를 Request 클래스로 변환할 때, 요청으로 전달되지 않은 인자에 대한 기본값을 설정할 필요가 있음.
+BaseRequest 클래스를 상속받는 클래스에서 기본값을 적용할 수 있는 구조를 추가함.
 
 # 알아볼거
 
