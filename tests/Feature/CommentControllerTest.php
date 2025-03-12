@@ -18,7 +18,7 @@ class CommentControllerTest extends TestCase
                 'author' => '테스트 작성자',
                 'password' => '1234',
                 'content' => '테스트 댓글 내용',
-                'post_id' => 1,
+                'postId' => 1,
             ]);
         }
 
@@ -47,7 +47,7 @@ class CommentControllerTest extends TestCase
                 'author' => '테스트 작성자',
                 'password' => '1234',
                 'content' => '테스트 댓글 내용',
-                'post_id' => $post->id,
+                'postId' => $post->id,
             ]);
         }
         // when
@@ -69,7 +69,7 @@ class CommentControllerTest extends TestCase
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
-            'post_id' => 1,
+            'postId' => 1,
         ]);
 
         // when
@@ -108,7 +108,7 @@ class CommentControllerTest extends TestCase
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
-            'post_id' => $post->id,
+            'postId' => $post->id,
         ];
 
         // when
@@ -129,7 +129,7 @@ class CommentControllerTest extends TestCase
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
-            'post_id' => 3,
+            'postId' => 3,
         ];
 
         // when

@@ -6,7 +6,7 @@ use App\Requests\BaseRequest;
 
 class CommentStoreRequest extends BaseRequest
 {
-    protected int $post_id;
+    protected int $postId;
     protected string $author;
     protected string $content;
     protected string $password;
@@ -16,7 +16,7 @@ class CommentStoreRequest extends BaseRequest
      */
     public function getPostId(): int
     {
-        return $this->post_id;
+        return $this->postId;
     }
 
     /**

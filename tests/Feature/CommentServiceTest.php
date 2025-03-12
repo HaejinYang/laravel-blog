@@ -44,7 +44,7 @@ class CommentServiceTest extends TestCase
                 'author' => '테스트 작성자',
                 'password' => '1234',
                 'content' => '테스트 댓글 내용',
-                'post_id' => 1,
+                'postId' => 1,
             ]);
         }
         $request = new CommentSearchRequest();
@@ -64,7 +64,7 @@ class CommentServiceTest extends TestCase
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
-            'post_id' => 1,
+            'postId' => 1,
         ]);
 
         // when
@@ -96,7 +96,7 @@ class CommentServiceTest extends TestCase
             'author' => '테스트 작성자',
             'content' => '테스트 댓글 내용',
             'password' => '1234',
-            'post_id' => $post->id,
+            'postId' => $post->id,
         ]);
 
         // when
@@ -114,7 +114,7 @@ class CommentServiceTest extends TestCase
             'author' => '테스트 작성자',
             'content' => '테스트 댓글 내용',
             'password' => '1234',
-            'post_id' => 99999,
+            'postId' => 99999,
         ]);
 
         // expected

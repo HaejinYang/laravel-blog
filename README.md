@@ -111,6 +111,13 @@ EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션
 
 ## 15) Post 관련 FormRequest, Request 따로 분리. Comment도 마찬가지로
 
+## 16) 모델 프로퍼티 이름을 카멜 케이스로 인식해주는 Attribute 추가
+
+Comment 모델에서 포스트 id를 post_id로 갖고 있음. 이로 인하여 FormRequest, Request 등
+여러 관련 클래스의 프로퍼티 이름이 post_id만 스네이크 케이스고, 나머지는 카멜 케이스임.
+이를 해결하기 위해, 모델의 프로퍼티 이름을 카멜 케이스로 인식해주는 Attribute를 추가함.
+Comment 모델 참고.
+
 계속 만들면서, 해봐야겟슴.
 
 - ~~포스트 삭제~~

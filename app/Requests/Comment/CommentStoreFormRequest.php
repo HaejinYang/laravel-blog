@@ -23,7 +23,7 @@ class CommentStoreFormRequest extends BaseFormRequest
             'author' => 'required|string|min:1',
             'content' => 'required|string|min:1',
             'password' => 'required|string|min:4',
-            'post_id' => 'required|integer|min:1'
+            'postId' => 'required|integer|min:1'
         ];
     }
 }
