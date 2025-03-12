@@ -172,5 +172,21 @@ class PostControllerTest extends TestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $data['code']);
     }
 
+    public function test_포스트_삭제(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+        ]);
+        $postId = $post->id;
 
+        // when
+        $response = $this->deleteJson("/api/posts/{$postId}");
+
+        // then
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertEquals(0, Post::count());
+    }
 }

@@ -198,5 +198,20 @@ class PostServiceTest extends TestCase
         }, PostNotFound::class);
     }
 
+    public function test_포스트_삭제(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+        ]);
+        $postId = $post->id;
 
+        // when
+        $this->postService->delete($postId);
+
+        // then
+        $this->assertNull(Post::find($postId));
+    }
 }

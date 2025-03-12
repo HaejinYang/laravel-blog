@@ -58,4 +58,8 @@ class PostService
         return $response;
     }
 
+    public function delete(string $postId): void
+    {
+        Post::destroy($postId);
+    }
 }
