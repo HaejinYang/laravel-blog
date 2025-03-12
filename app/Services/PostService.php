@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\PostNotFound;
 use App\Models\Post;
+use App\Requests\PostSearchRequest;
 use App\Requests\PostStoreRequest;
 use App\Responses\PostResponse;
 
@@ -20,9 +21,13 @@ class PostService
     /**
      * @return PostResponse[]
      */
-    public function getMany(): array
+    public function getMany(PostSearchRequest $postSearchRequest): array
     {
-        $response = Post::all()->map(fn($post) => new PostResponse($post))->toArray();
+        $page = $postSearchRequest->getPage() - 1;
+        $pageSize = $postSearchRequest->getPageSize();
+        $orderBy = $postSearchRequest->getOrderBy();
+
+        $response = Post::orderBy('id', $orderBy)->paginate($pageSize, ['*'], 'page', $page)->map(fn($post) => new PostResponse($post))->toArray();
 
         return $response;
     }

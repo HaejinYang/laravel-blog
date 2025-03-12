@@ -85,6 +85,11 @@ laravel new laravel-blog
 FormRequest 클래스를 Request 클래스로 변환할 때, 요청으로 전달되지 않은 인자에 대한 기본값을 설정할 필요가 있음.
 BaseRequest 클래스를 상속받는 클래스에서 기본값을 적용할 수 있는 구조를 추가함.
 
+## 12) 포스트 리스트 조회에 페이지네이션 적용
+
+EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션을 적용함.
+페이지 번호, 페이지 크기, 오름차순&내림차순 정렬을 적용함.
+
 # 알아볼거
 
 - phpunit에서 컨트롤러 호출하는 원리

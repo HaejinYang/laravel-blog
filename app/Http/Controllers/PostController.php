@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Requests\PostSearchFormRequest;
 use App\Requests\PostStoreFormRequest;
 use App\Responses\PostResponse;
 use App\Services\PostService;
@@ -18,9 +19,11 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): array
+    public function index(PostSearchFormRequest $request): array
     {
-        $response = $this->postService->getMany();
+        $validated = $request->toRequest();
+
+        $response = $this->postService->getMany($validated);
 
         return $response;
     }

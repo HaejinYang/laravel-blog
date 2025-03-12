@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Post;
+use App\Requests\PostSearchRequest;
 use App\Requests\PostStoreRequest;
 use App\Services\PostService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,16 +15,26 @@ class PostServiceTest extends TestCase
 
     private PostService $postService;
 
-    public function test_0개_조회(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
+        $this->postService = app(PostService::class);
+    }
+
+    public function test_리스트_조회_데이터없으면_응답이비어야함(): void
+    {
+        // given
+        $request = new PostSearchRequest();
+
         // when
-        $response = $this->postService->getMany();
+        $response = $this->postService->getMany($request);
 
         // then
         $this->assertEquals([], $response);
     }
 
-    public function test_N개_조회(): void
+    public function test_리스트_조회_pageSize이하로_조회되어야함(): void
     {
         // given
         $postCount = 5;
@@ -34,12 +45,79 @@ class PostServiceTest extends TestCase
                 'author' => '포스트 작성자 {$i}',
             ]);
         });
+        $pageSize = 3;
+        $request = new PostSearchRequest();
+        $request->setPageSize($pageSize);
 
         // when
-        $response = $this->postService->getMany();
+        $response = $this->postService->getMany($request);
 
         // then
-        $this->assertCount($postCount, $response);
+        $this->assertCount($pageSize, $response);
+    }
+
+    public function test_리스트_조회_요청범위가_데이터갯수를_초과하면_응답데이터가_비어야함(): void
+    {
+        // given
+        $postCount = 5;
+        collect(range(1, $postCount))->each(function ($i) {
+            Post::create([
+                'title' => '포스트 제목 {$i}',
+                'content' => '포스트 내용 {$i}',
+                'author' => '포스트 작성자 {$i}',
+            ]);
+        });
+        $request = new PostSearchRequest();
+        $request->setPage(999);
+        $request->setPageSize(999);
+
+        // when
+        $response = $this->postService->getMany($request);
+
+        // then
+        $this->assertCount(0, $response);
+    }
+
+    public function test_리스트_조회_오름차순(): void
+    {
+        // given
+        $postCount = 5;
+        collect(range(1, $postCount))->each(function ($i) {
+            Post::create([
+                'title' => '포스트 제목 {$i}',
+                'content' => '포스트 내용 {$i}',
+                'author' => '포스트 작성자 {$i}',
+            ]);
+        });
+        $request = new PostSearchRequest();
+        $request->setOrderBy('asc');
+
+        // when
+        $response = $this->postService->getMany($request);
+
+        // then
+        $this->assertEquals(1, $response[0]->getId());
+    }
+
+    public function test_리스트_조회_내림차순(): void
+    {
+        // given
+        $postCount = 5;
+        collect(range(1, $postCount))->each(function ($i) {
+            Post::create([
+                'title' => '포스트 제목 {$i}',
+                'content' => '포스트 내용 {$i}',
+                'author' => '포스트 작성자 {$i}',
+            ]);
+        });
+        $request = new PostSearchRequest();
+        $request->setOrderBy('desc');
+
+        // when
+        $response = $this->postService->getMany($request);
+
+        // then
+        $this->assertEquals(5, $response[0]->getId());
     }
 
     public function test_1개_특정해서_조회(): void
@@ -77,12 +155,5 @@ class PostServiceTest extends TestCase
         $this->assertEquals('포스트 제목', $response->getTitle());
         $this->assertEquals('포스트 내용', $response->getContent());
         $this->assertEquals('포스트 작성자', $response->getAuthor());
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->postService = app(PostService::class);
     }
 }
