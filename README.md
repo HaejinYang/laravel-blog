@@ -90,6 +90,15 @@ BaseRequest 클래스를 상속받는 클래스에서 기본값을 적용할 수
 EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션을 적용함.
 페이지 번호, 페이지 크기, 오름차순&내림차순 정렬을 적용함.
 
+# 4. 중간 점검
+
+- 블로그 포스트 리스트 조회, 조회, 생성 API 및 테스트
+- 요청 처리를 위해 FormRequest와 BaseRequest 클래스 적용
+- 응답 처리를 위해 BaseResponse 클래스 적용
+- 예외 처리를 위해 BaseException와 ErroResponse 클래스 적용
+
+계속 만들면서, 해봐야겟슴.
+
 # 알아볼거
 
 - phpunit에서 컨트롤러 호출하는 원리
