@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Exceptions\CommentNotFound;
+use App\Exceptions\PostNotFound;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Requests\Comment\CommentSearchRequest;
+use App\Requests\Comment\CommentStoreRequest;
 use App\Responses\CommentResponse;
 
 class CommentService
@@ -44,6 +47,17 @@ class CommentService
             ->paginate($pageSize, ['*'], 'page', $page)
             ->map(fn($comment) => new CommentResponse($comment))
             ->toArray();
+
+        return $response;
+    }
+
+    public function save(CommentStoreRequest $request)
+    {
+        $postId = $request->getPostId();
+        Post::findOr($postId, fn() => throw new PostNotFound());
+
+        $comment = Comment::create($request->toArray());
+        $response = new CommentResponse($comment);
 
         return $response;
     }

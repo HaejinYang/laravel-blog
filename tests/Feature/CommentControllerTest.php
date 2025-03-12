@@ -94,4 +94,49 @@ class CommentControllerTest extends TestCase
             "code" => 404
         ]);
     }
+
+    public function test_포스트에_댓글_추가(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '테스트 포스트',
+            'content' => '테스트 포스트 내용',
+            'author' => '테스트 작성자',
+        ]);
+
+        $request = [
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'post_id' => $post->id,
+        ];
+
+        // when
+        $response = $this->postJson("/api/comments", $request);
+
+        // then
+        $response->assertStatus(Response::HTTP_OK);
+        $data = $response->json();
+        $this->assertEquals(1, Comment::count());
+        $this->assertEquals('테스트 댓글 내용', Comment::first()->content);
+        $this->assertEquals('테스트 작성자', Comment::first()->author);
+    }
+
+    public function test_존재하지_않는_포스트에_댓글_추가는_실패해야함(): void
+    {
+        // given
+        $request = [
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'post_id' => 3,
+        ];
+
+        // when
+        $response = $this->postJson("/api/comments", $request);
+
+        // then
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+
+    }
 }

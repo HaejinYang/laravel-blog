@@ -2,8 +2,11 @@
 
 
 use App\Exceptions\CommentNotFound;
+use App\Exceptions\PostNotFound;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Requests\Comment\CommentSearchRequest;
+use App\Requests\Comment\CommentStoreRequest;
 use App\Services\CommentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,6 +16,13 @@ class CommentServiceTest extends TestCase
     use RefreshDatabase;
 
     private CommentService $commentService;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->commentService = app(CommentService::class);
+    }
 
     public function test_리스트_조회_데이터없으면_응답이_비어야함(): void
     {
@@ -73,10 +83,43 @@ class CommentServiceTest extends TestCase
         }, CommentNotFound::class);
     }
 
-    protected function setUp(): void
+    public function test_포스트에_댓글_추가(): void
     {
-        parent::setUp();
+        // given
+        $post = Post::create([
+            'title' => '테스트 포스트',
+            'content' => '테스트 포스트 내용',
+            'author' => '테스트 작성자',
+        ]);
 
-        $this->commentService = app(CommentService::class);
+        $request = new CommentStoreRequest([
+            'author' => '테스트 작성자',
+            'content' => '테스트 댓글 내용',
+            'password' => '1234',
+            'post_id' => $post->id,
+        ]);
+
+        // when
+        $response = $this->commentService->save($request);
+
+        // then
+        $this->assertEquals('테스트 댓글 내용', $response->getContent());
+        $this->assertEquals('테스트 작성자', $response->getAuthor());
+    }
+
+    public function test_존재하지_않는_포스트에_댓글_추가할수없다(): void
+    {
+        // given
+        $request = new CommentStoreRequest([
+            'author' => '테스트 작성자',
+            'content' => '테스트 댓글 내용',
+            'password' => '1234',
+            'post_id' => 99999,
+        ]);
+
+        // expected
+        $this->assertThrows(function () use ($request) {
+            $this->commentService->save($request);
+        }, PostNotFound::class);
     }
 }

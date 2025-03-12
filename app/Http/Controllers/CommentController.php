@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Requests\Comment\CommentSearchFormRequest;
+use App\Requests\Comment\CommentStoreFormRequest;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
 
@@ -44,9 +45,12 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CommentStoreFormRequest $formRequest)
     {
-        //
+        $request = $formRequest->toRequest();
+        $response = $this->commentService->save($request);
+
+        return $response;
     }
 
     /**
