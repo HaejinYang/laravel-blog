@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Requests\CommentSearchFormRequest;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
 
@@ -16,15 +17,20 @@ class CommentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(CommentSearchFormRequest $formRequest)
     {
-        return "comments";
+        $request = $formRequest->toRequest();
+        $response = $this->commentService->getMany($request);
+
+        return $response;
     }
 
-    public function indexByPost(Post $post)
+    public function indexByPost(Post $post, CommentSearchFormRequest $formRequest)
     {
-        $a = $post->toArray();
-        return "comments in post";
+        $request = $formRequest->toRequest();
+        $response = $this->commentService->getMany($request, $post->id);
+
+        return $response;
     }
 
     /**

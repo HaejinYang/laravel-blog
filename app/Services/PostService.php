@@ -10,6 +10,9 @@ use App\Responses\PostResponse;
 
 class PostService
 {
+    /**
+     * @return PostResponse
+     */
     public function getOne(int $postId): PostResponse
     {
         $post = Post::findOr($postId, fn() => throw new PostNotFound());
@@ -32,6 +35,9 @@ class PostService
         return $response;
     }
 
+    /**
+     * @return PostResponse
+     */
     public function save(PostStoreRequest $request): PostResponse
     {
         $post = Post::create($request->toArray());

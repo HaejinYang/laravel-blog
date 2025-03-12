@@ -10,7 +10,30 @@ class CommentControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_댓글_리스트_조회(): void
+    public function test_포스트_없는_댓글_리스트_조회(): void
+    {
+        // given
+        for ($i = 0; $i < 3; $i++) {
+            Comment::create([
+                'author' => '테스트 작성자',
+                'password' => '1234',
+                'content' => '테스트 댓글 내용',
+                'post_id' => 1,
+            ]);
+        }
+
+        // when
+        $response = $this->getJson("/api/comments");
+
+        // then
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonCount(3);
+        $data = $response->json();
+        $this->assertEquals('테스트 댓글 내용', $data[0]['content']);
+        $this->assertEquals(3, $data[0]['id']);
+    }
+
+    public function test_포스트에_포함된_댓글_리스트_조회(): void
     {
         // given
         $post = Post::create([
@@ -19,11 +42,24 @@ class CommentControllerTest extends TestCase
             'author' => '테스트 작성자',
         ]);
 
+        for ($i = 0; $i < 3; $i++) {
+            Comment::create([
+                'author' => '테스트 작성자',
+                'password' => '1234',
+                'content' => '테스트 댓글 내용',
+                'post_id' => $post->id,
+            ]);
+        }
         // when
         $postId = $post->id;
         $response = $this->getJson("/api/posts/{$postId}/comments");
+
+        // then
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertContent('comments in post');
+        $response->assertJsonCount(3);
+        $data = $response->json();
+        $this->assertEquals('테스트 댓글 내용', $data[0]['content']);
+        $this->assertEquals(3, $data[0]['id']);
     }
 
     public function test_특정_댓글_조회(): void

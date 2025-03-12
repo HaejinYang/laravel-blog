@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CommentNotFound;
 use App\Models\Comment;
+use App\Requests\CommentSearchRequest;
 use App\Responses\CommentResponse;
 
 class CommentService
@@ -16,6 +17,33 @@ class CommentService
     {
         $comment = Comment::findOr($commentId, fn() => throw new CommentNotFound());
         $response = new CommentResponse($comment);
+
+        return $response;
+    }
+
+    /**
+     * @param int $postId 게시글ID
+     * @return CommentResponse[]
+     */
+    public function getMany(CommentSearchRequest $request, int $postId = -1): array
+    {
+        $page = $request->getPage() - 1;
+        $pageSize = $request->getPageSize();
+        $orderBy = $request->getOrderBy();
+
+        // 1) 쿼리 빌더 시작
+        $query = Comment::query();
+
+        // 2) postId가 -1이 아니라면 조건 추가
+        if ($postId !== -1) {
+            $query->where('post_id', $postId);
+        }
+
+        // 3) 나머지 정렬, 페이징 처리
+        $response = $query->orderBy('id', $orderBy)
+            ->paginate($pageSize, ['*'], 'page', $page)
+            ->map(fn($comment) => new CommentResponse($comment))
+            ->toArray();
 
         return $response;
     }
