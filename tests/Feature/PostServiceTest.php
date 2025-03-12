@@ -4,9 +4,9 @@ namespace Tests\Feature;
 
 use App\Exceptions\PostNotFound;
 use App\Models\Post;
-use App\Requests\PostSearchRequest;
-use App\Requests\PostStoreRequest;
-use App\Requests\PostUpdateRequest;
+use App\Requests\Post\PostSearchRequest;
+use App\Requests\Post\PostStoreRequest;
+use App\Requests\Post\PostUpdateRequest;
 use App\Services\PostService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -197,4 +197,6 @@ class PostServiceTest extends TestCase
             $this->postService->update($postId, $request);
         }, PostNotFound::class);
     }
+
+
 }

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CommentNotFound;
 use App\Models\Comment;
-use App\Requests\CommentSearchRequest;
+use App\Requests\Comment\CommentSearchRequest;
 use App\Responses\CommentResponse;
 
 class CommentService

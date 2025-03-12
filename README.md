@@ -109,7 +109,20 @@ EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션
 - 응답 처리를 위해 BaseResponse 클래스 적용
 - 예외 처리를 위해 BaseException와 ErroResponse 클래스 적용
 
+## 15) Post 관련 FormRequest, Request 따로 분리. Comment도 마찬가지로
+
 계속 만들면서, 해봐야겟슴.
+
+- 포스트 삭제
+- 댓글 수정
+- 댓글 생성
+- 댓글 삭제
+
+- 유저
+- 암호화
+- 유저 권한, 인증 등...
+
+...
 
 # 알아볼거
 

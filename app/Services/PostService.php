@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Exceptions\PostNotFound;
 use App\Models\Post;
-use App\Requests\PostSearchRequest;
-use App\Requests\PostStoreRequest;
-use App\Requests\PostUpdateRequest;
+use App\Requests\Post\PostSearchRequest;
+use App\Requests\Post\PostStoreRequest;
+use App\Requests\Post\PostUpdateRequest;
 use App\Responses\PostResponse;
 
 class PostService
@@ -57,4 +57,5 @@ class PostService
 
         return $response;
     }
+
 }

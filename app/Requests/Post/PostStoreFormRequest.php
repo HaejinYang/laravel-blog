@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Requests;
+namespace App\Requests\Post;
 
-class CommentSearchFormRequest extends BaseFormRequest
+
+use App\Requests\BaseFormRequest;
+
+class PostStoreFormRequest extends BaseFormRequest
 {
     /**
      * 요청을 인증할지 여부
@@ -18,9 +21,9 @@ class CommentSearchFormRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'page' => 'nullable|integer|min:1',
-            'pageSize' => 'nullable|integer|min:1',
-            'orderBy' => 'nullable|string|in:asc,desc'
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'author' => 'required|string|max:100',
         ];
     }
 }

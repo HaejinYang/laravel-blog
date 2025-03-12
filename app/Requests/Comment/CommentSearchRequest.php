@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Requests;
+namespace App\Requests\Comment;
+
+use App\Requests\BaseRequest;
 
 class CommentSearchRequest extends BaseRequest
 {

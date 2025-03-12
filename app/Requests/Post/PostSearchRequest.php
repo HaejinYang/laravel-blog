@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Requests;
+namespace App\Requests\Post;
+
+use App\Requests\BaseRequest;
 
 class PostSearchRequest extends BaseRequest
 {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Requests\PostSearchFormRequest;
-use App\Requests\PostStoreFormRequest;
-use App\Requests\PostUpdateFormRequest;
+use App\Requests\Post\PostSearchFormRequest;
+use App\Requests\Post\PostStoreFormRequest;
+use App\Requests\Post\PostUpdateFormRequest;
 use App\Responses\PostResponse;
 use App\Services\PostService;
 use Illuminate\Http\Response;
@@ -76,8 +76,8 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $postId)
     {
-        //
+
     }
 }

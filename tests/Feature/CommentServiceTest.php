@@ -3,7 +3,7 @@
 
 use App\Exceptions\CommentNotFound;
 use App\Models\Comment;
-use App\Requests\CommentSearchRequest;
+use App\Requests\Comment\CommentSearchRequest;
 use App\Services\CommentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
-use App\Requests\CommentSearchFormRequest;
+use App\Requests\Comment\CommentSearchFormRequest;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
 

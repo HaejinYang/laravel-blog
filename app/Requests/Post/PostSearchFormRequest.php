@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Requests;
+namespace App\Requests\Post;
+
+use App\Requests\BaseFormRequest;
 
 class PostSearchFormRequest extends BaseFormRequest
 {

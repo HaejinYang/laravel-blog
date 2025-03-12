@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Requests;
+namespace App\Requests\Post;
 
 
-class PostStoreFormRequest extends BaseFormRequest
+use App\Requests\BaseFormRequest;
+
+class PostUpdateFormRequest extends BaseFormRequest
 {
     /**
      * 요청을 인증할지 여부
@@ -20,8 +22,7 @@ class PostStoreFormRequest extends BaseFormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'author' => 'required|string|max:100',
+            'content' => 'required|string'
         ];
     }
 }
