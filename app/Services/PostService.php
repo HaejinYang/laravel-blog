@@ -6,6 +6,7 @@ use App\Exceptions\PostNotFound;
 use App\Models\Post;
 use App\Requests\PostSearchRequest;
 use App\Requests\PostStoreRequest;
+use App\Requests\PostUpdateRequest;
 use App\Responses\PostResponse;
 
 class PostService
@@ -41,6 +42,17 @@ class PostService
     public function save(PostStoreRequest $request): PostResponse
     {
         $post = Post::create($request->toArray());
+        $response = new PostResponse($post);
+
+        return $response;
+    }
+
+    public function update(string $postId, PostUpdateRequest $request): PostResponse
+    {
+        $post = Post::findOr($postId, fn() => throw new PostNotFound());
+        $post->update($request->toArray());
+        $post->save();
+
         $response = new PostResponse($post);
 
         return $response;

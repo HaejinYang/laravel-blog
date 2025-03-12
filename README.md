@@ -97,6 +97,11 @@ EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션
 - 댓글 조회 API 추가
 - 댓글 조회 API 테스트 추가. assertThrow를 활용하여 CommentService의 getOne 메서드 예외 처리 테스트
 
+## 14) 포스트 수정 API 추가
+
+- 기존 포스트를 찾고, 찾지 못하면 PostNotFound 예외를 던짐
+- 찾으면, 업데이트하고, save하고, 응답함
+
 # 4. 중간 점검
 
 - 블로그 포스트 리스트 조회, 조회, 생성 API 및 테스트
@@ -111,3 +116,4 @@ EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션
 - phpunit에서 컨트롤러 호출하는 원리
 - phpunit에서 use RefreshDatabase; 좀더 자세히
 - php의 static late binding과 reflection
+- API 문서 생성

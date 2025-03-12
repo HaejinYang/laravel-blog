@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\PostNotFound;
 use App\Models\Post;
 use App\Requests\PostSearchRequest;
 use App\Requests\PostStoreRequest;
+use App\Requests\PostUpdateRequest;
 use App\Services\PostService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -155,5 +157,44 @@ class PostServiceTest extends TestCase
         $this->assertEquals('포스트 제목', $response->getTitle());
         $this->assertEquals('포스트 내용', $response->getContent());
         $this->assertEquals('포스트 작성자', $response->getAuthor());
+    }
+
+    public function test_존재하는_포스트_수정(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+        ]);
+        $postId = $post->id;
+
+        $request = new PostUpdateRequest([
+            'title' => '수정 제목',
+            'content' => '수정 내용'
+        ]);
+
+        // when
+        $response = $this->postService->update($postId, $request);
+
+        // then
+        $this->assertEquals('수정 제목', $response->getTitle());
+        $this->assertEquals('수정 내용', $response->getContent());
+        $this->assertEquals('포스트 작성자', $response->getAuthor());
+    }
+
+    public function test_존재하지_않는_포스트_수정은_실패해야함(): void
+    {
+        // given
+        $request = new PostUpdateRequest([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+        ]);
+        $postId = 9999999;
+
+        // expected
+        $this->assertThrows(function () use ($postId, $request) {
+            $this->postService->update($postId, $request);
+        }, PostNotFound::class);
     }
 }

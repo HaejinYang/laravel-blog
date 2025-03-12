@@ -129,4 +129,46 @@ class PostControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $this->assertEquals(0, Post::count());
     }
+
+    public function test_존재하는_포스트_수정(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+        ]);
+        $postId = $post->id;
+
+        $data = [
+            'title' => "수정된 제목",
+            'content' => '수정된 내용'
+        ];
+
+        // when
+        $response = $this->patchJson("/api/posts/{$postId}", $data);
+
+        // then
+        $data = $response->json();
+        $response->assertStatus(Response::HTTP_OK);
+        $this->assertEquals('수정된 제목', $data['title']);
+    }
+
+    public function test_존재하지않는_포스트_수정은_실패(): void
+    {
+        // given
+        $postId = 999999;
+        $data = [
+            'title' => "수정된 제목",
+            'content' => '수정된 내용'
+        ];
+
+        // when
+        $response = $this->patchJson("/api/posts/{$postId}", $data);
+
+        // then
+        $data = $response->json();
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $data['code']);
+    }
 }

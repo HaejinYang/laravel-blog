@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Requests\PostSearchFormRequest;
 use App\Requests\PostStoreFormRequest;
+use App\Requests\PostUpdateFormRequest;
 use App\Responses\PostResponse;
 use App\Services\PostService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PostController extends Controller
@@ -65,9 +65,12 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PostUpdateFormRequest $formRequest, string $id)
     {
-        //
+        $request = $formRequest->toRequest();
+        $post = $this->postService->update($id, $request);
+
+        return $post;
     }
 
     /**
