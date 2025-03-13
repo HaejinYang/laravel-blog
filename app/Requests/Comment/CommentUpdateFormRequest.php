@@ -21,6 +21,7 @@ class CommentUpdateFormRequest extends BaseFormRequest
     {
         return [
             'content' => 'required|string|min:1',
+            'password' => 'required|string|min:4',
         ];
     }
 }

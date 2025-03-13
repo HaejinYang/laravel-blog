@@ -15,6 +15,11 @@ use App\Responses\CommentResponse;
 
 class CommentService
 {
+    public function __construct(private PasswordEncryptor $passwordEncryptor)
+    {
+        // 생성자
+    }
+
     /**
      * @param int $commentId 댓글ID
      * @return CommentResponse
@@ -65,22 +70,28 @@ class CommentService
         return $response;
     }
 
-    public function update(Comment $comment, CommentUpdateRequest $formRequest): CommentResponse
+    public function update(Comment $comment, CommentUpdateRequest $request): CommentResponse
     {
-        $comment->update($formRequest->toArray());
+        if ($this->passwordEncryptor->check($request->getPassword(), $comment->password) === false) {
+            throw new CommentPasswordNotMatch();
+        }
+
+        $comment->update($request->toArray());
         $comment->save();
         $response = new CommentResponse($comment);
+
         return $response;
     }
 
     public function delete(Comment $comment, CommentDeleteRequest $request): CommentResponse
     {
-        $save = $comment;
-        if ($request->getPassword() !== $comment->password) {
+        if ($this->passwordEncryptor->check($request->getPassword(), $comment->password) === false) {
             throw new CommentPasswordNotMatch();
         }
 
-        $response = new CommentResponse($save);
+        $comment->delete();
+        $response = new CommentResponse($comment);
+
         return $response;
     }
 }

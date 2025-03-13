@@ -137,6 +137,7 @@ class CommentServiceTest extends TestCase
         ]);
         $request = new CommentUpdateRequest([
             'content' => '수정 댓글 내용',
+            'password' => '1234',
         ]);
 
         // when

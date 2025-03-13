@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\PasswordEncryptor;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(PasswordEncryptor::class, function ($app) {
+            return new PasswordEncryptor;
+        });
     }
 
     /**

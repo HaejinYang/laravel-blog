@@ -150,6 +150,7 @@ class CommentControllerTest extends TestCase
         ]);
         $request = [
             'content' => '수정 댓글 내용',
+            'password' => '1234'
         ];
 
         // when
@@ -164,6 +165,7 @@ class CommentControllerTest extends TestCase
         // given
         $request = [
             'content' => '수정 댓글 내용',
+            'password' => '1234'
         ];
         $commentId = 999999999;
         // when
