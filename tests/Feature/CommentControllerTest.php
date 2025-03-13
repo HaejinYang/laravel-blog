@@ -137,6 +137,39 @@ class CommentControllerTest extends TestCase
 
         // then
         $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
 
+    public function test_존재하는_댓글_수정(): void
+    {
+        // given
+        $comment = Comment::create([
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'postId' => 1,
+        ]);
+        $request = [
+            'content' => '수정 댓글 내용',
+        ];
+
+        // when
+        $response = $this->patchJson("/api/comments/{$comment->id}", $request);
+
+        // then
+        $response->assertStatus(Response::HTTP_OK);
+    }
+
+    public function test_존재하지_않는_댓글_수정(): void
+    {
+        // given
+        $request = [
+            'content' => '수정 댓글 내용',
+        ];
+        $commentId = 999999999;
+        // when
+        $response = $this->patchJson("/api/comments/{$commentId}", $request);
+
+        // then
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

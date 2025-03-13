@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Requests\Comment\CommentSearchRequest;
 use App\Requests\Comment\CommentStoreRequest;
+use App\Requests\Comment\CommentUpdateRequest;
 use App\Responses\CommentResponse;
 
 class CommentService
@@ -59,6 +60,14 @@ class CommentService
         $comment = Comment::create($request->toArray());
         $response = new CommentResponse($comment);
 
+        return $response;
+    }
+
+    public function update(Comment $comment, CommentUpdateRequest $formRequest): CommentResponse
+    {
+        $comment->update($formRequest->toArray());
+        $comment->save();
+        $response = new CommentResponse($comment);
         return $response;
     }
 }

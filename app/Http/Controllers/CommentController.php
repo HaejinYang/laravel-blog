@@ -6,8 +6,8 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Requests\Comment\CommentSearchFormRequest;
 use App\Requests\Comment\CommentStoreFormRequest;
+use App\Requests\Comment\CommentUpdateFormRequest;
 use App\Services\CommentService;
-use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
@@ -74,9 +74,12 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comment $comment)
+    public function update(CommentUpdateFormRequest $formRequest, Comment $comment)
     {
-        //
+        $request = $formRequest->toRequest();
+        $response = $this->commentService->update($comment, $request);
+
+        return $response;
     }
 
     /**

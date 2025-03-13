@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Requests\Comment\CommentSearchRequest;
 use App\Requests\Comment\CommentStoreRequest;
+use App\Requests\Comment\CommentUpdateRequest;
 use App\Services\CommentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -121,5 +122,25 @@ class CommentServiceTest extends TestCase
         $this->assertThrows(function () use ($request) {
             $this->commentService->save($request);
         }, PostNotFound::class);
+    }
+
+    public function test_존재하는_댓글_수정(): void
+    {
+        // given
+        $comment = Comment::create([
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'postId' => 1,
+        ]);
+        $request = new CommentUpdateRequest([
+            'content' => '수정 댓글 내용',
+        ]);
+
+        // when
+        $response = $this->commentService->update($comment, $request);
+
+        // then
+        $this->assertEquals('수정 댓글 내용', $response->getContent());
     }
 }
