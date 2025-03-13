@@ -2,6 +2,7 @@
 
 use App\Exceptions\BaaseException;
 use App\Responses\ErrorResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -45,6 +46,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
             if ($e instanceof NotFoundHttpException) {
                 $code = Response::HTTP_NOT_FOUND;
+                $response = new ErrorResponse($code, $e->getMessage());
+            }
+
+            if ($e instanceof AuthenticationException) {
+                $code = Response::HTTP_UNAUTHORIZED;
                 $response = new ErrorResponse($code, $e->getMessage());
             }
 

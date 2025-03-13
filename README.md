@@ -118,18 +118,20 @@ Comment 모델에서 포스트 id를 post_id로 갖고 있음. 이로 인하여 
 이를 해결하기 위해, 모델의 프로퍼티 이름을 카멜 케이스로 인식해주는 Attribute를 추가함.
 Comment 모델 참고.
 
-계속 만들면서, 해봐야겟슴.
+## 17) PasswordEncryptor 추가 및 Comment 모델 비밀번호 처리 개선
 
-- ~~포스트 삭제~~
-- ~~댓글 생성~~
-- ~~댓글 수정~~
-- ~~댓글 삭제~~
+- PasswordEncryptor 서비스 추가 (비밀번호 암호화 전담)
+- Comment 모델에 `setPasswordAttribute` Mutator를 사용하여 password 자동 해싱 적용
+- Comment 수정 및 삭제 시, 입력된 password가 기존 hash와 일치하는지 검증 로직 추가
 
-- 유저
-- 암호화
-- 유저 권한, 인증 등...
+## 18) Sanctum을 이용한 인증 API 추가
 
-...
+- Sanctum을 이용하여 가입, 로그인, 로그아웃 같은 인증 API 추가
+- 토큰 발행 및 검증 진행
+
+해야할일
+
+- 유저와 포스트, 댓글을 연동해야함
 
 # 알아볼거
 
@@ -137,3 +139,5 @@ Comment 모델 참고.
 - phpunit에서 use RefreshDatabase; 좀더 자세히
 - php의 static late binding과 reflection
 - API 문서 생성
+- 암호화 알고리즘, 해시, 내가 쓴 Hash::make의 기본 알고리즘?
+- use HasApiTokens, HasFactory, Notifiable;
