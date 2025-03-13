@@ -17,7 +17,7 @@ class PostController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * 포스트 리스트 조회
      */
     public function index(PostSearchFormRequest $request): array
     {
@@ -37,12 +37,12 @@ class PostController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 포스트 생성
      */
-    public function store(PostStoreFormRequest $request)
+    public function store(PostStoreFormRequest $formRequest)
     {
-        $validated = $request->toRequest();
-        $post = $this->postService->save($validated);
+        $request = $formRequest->toRequest();
+        $post = $this->postService->save($request);
 
         return response()->json($post, Response::HTTP_OK);
     }

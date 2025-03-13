@@ -10,6 +10,7 @@ class PostResponse extends BaseResponse
     private string $title;
     private string $content;
     private string $author;
+    private int $userId;
 
     public function __construct(Post $post)
     {
@@ -17,6 +18,15 @@ class PostResponse extends BaseResponse
         $this->title = $post->title;
         $this->content = $post->content;
         $this->author = $post->author;
+        $this->userId = $post->user_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 
     /**

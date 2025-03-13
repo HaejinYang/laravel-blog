@@ -7,10 +7,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
+use Tests\TestHelper\AuthHelper;
 
 class PostControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, AuthHelper;
 
     public function test_데이터베이스_드라이버_SQLite_memory_확인(): void
     {
@@ -99,10 +100,12 @@ class PostControllerTest extends TestCase
     public function test_포스트_생성(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $data = [
             'title' => 'Test Post',
             'content' => 'This is a test content.',
             'author' => 'John Doe',
+            'userId' => $user->id,
         ];
 
         // when
@@ -116,10 +119,12 @@ class PostControllerTest extends TestCase
     public function test_포스트_올바르지못한_생성은_실패해야함(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $data = [
             'title' => Str::random(300),
             'content' => 'This is a test content.',
             'author' => Str::random(300),
+            'userId' => $user->id,
         ];
 
         // when
@@ -127,6 +132,24 @@ class PostControllerTest extends TestCase
 
         // then
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $this->assertEquals(0, Post::count());
+    }
+
+    public function test_인증되지_못한_유저는_포스트를_생성할_수_없음(): void
+    {
+        // given
+        $data = [
+            'title' => Str::random(300),
+            'content' => 'This is a test content.',
+            'author' => Str::random(300),
+            'userId' => 1,
+        ];
+
+        // when
+        $response = $this->postJson('/api/posts', $data);
+
+        // then
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         $this->assertEquals(0, Post::count());
     }
 

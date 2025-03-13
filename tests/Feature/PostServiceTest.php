@@ -147,7 +147,8 @@ class PostServiceTest extends TestCase
         $request = new PostStoreRequest([
             'title' => '포스트 제목',
             'content' => '포스트 내용',
-            'author' => '포스트 작성자'
+            'author' => '포스트 작성자',
+            'userId' => 1,
         ]);
 
         // when
@@ -157,6 +158,7 @@ class PostServiceTest extends TestCase
         $this->assertEquals('포스트 제목', $response->getTitle());
         $this->assertEquals('포스트 내용', $response->getContent());
         $this->assertEquals('포스트 작성자', $response->getAuthor());
+        $this->assertEquals(1, $response->getUserId());
     }
 
     public function test_존재하는_포스트_수정(): void
