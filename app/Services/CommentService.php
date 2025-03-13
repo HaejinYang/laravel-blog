@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Exceptions\CommentNotFound;
+use App\Exceptions\CommentPasswordNotMatch;
 use App\Exceptions\PostNotFound;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Requests\Comment\CommentDeleteRequest;
 use App\Requests\Comment\CommentSearchRequest;
 use App\Requests\Comment\CommentStoreRequest;
 use App\Requests\Comment\CommentUpdateRequest;
@@ -68,6 +70,17 @@ class CommentService
         $comment->update($formRequest->toArray());
         $comment->save();
         $response = new CommentResponse($comment);
+        return $response;
+    }
+
+    public function delete(Comment $comment, CommentDeleteRequest $request): CommentResponse
+    {
+        $save = $comment;
+        if ($request->getPassword() !== $comment->password) {
+            throw new CommentPasswordNotMatch();
+        }
+
+        $response = new CommentResponse($save);
         return $response;
     }
 }

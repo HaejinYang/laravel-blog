@@ -2,9 +2,11 @@
 
 
 use App\Exceptions\CommentNotFound;
+use App\Exceptions\CommentPasswordNotMatch;
 use App\Exceptions\PostNotFound;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Requests\Comment\CommentDeleteRequest;
 use App\Requests\Comment\CommentSearchRequest;
 use App\Requests\Comment\CommentStoreRequest;
 use App\Requests\Comment\CommentUpdateRequest;
@@ -142,5 +144,46 @@ class CommentServiceTest extends TestCase
 
         // then
         $this->assertEquals('수정 댓글 내용', $response->getContent());
+    }
+
+    public function test_존재하는_댓글_비밀번호_일치하면_삭제성공(): void
+    {
+        // given
+        $comment = Comment::create([
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'postId' => 1,
+        ]);
+        $request = new CommentDeleteRequest([
+            'password' => '1234',
+        ]);
+
+        // when
+        $response = $this->commentService->delete($comment, $request);
+
+        // then
+        $this->assertEquals('테스트 댓글 내용', $response->getContent());
+        $this->assertEquals('테스트 작성자', $response->getAuthor());
+        $this->assertEquals(1, $response->getId());
+    }
+
+    public function test_존재하는_댓글_비밀번호_다르면_삭제실패(): void
+    {
+        // given
+        $comment = Comment::create([
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'postId' => 1,
+        ]);
+        $request = new CommentDeleteRequest([
+            'password' => '12345',
+        ]);
+
+        // expected
+        $this->assertThrows(function () use ($comment, $request) {
+            $this->commentService->delete($comment, $request);
+        }, CommentPasswordNotMatch::class);
     }
 }
