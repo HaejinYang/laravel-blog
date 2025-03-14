@@ -156,10 +156,12 @@ class PostControllerTest extends TestCase
     public function test_존재하는_포스트_수정(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $post = Post::create([
             'title' => '포스트 제목',
             'content' => '포스트 내용',
             'author' => '포스트 작성자',
+            'userId' => $user->id,
         ]);
         $postId = $post->id;
 
@@ -180,7 +182,34 @@ class PostControllerTest extends TestCase
     public function test_존재하지않는_포스트_수정은_실패(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $postId = 999999;
+        $data = [
+            'title' => '수정된 제목',
+            'content' => '수정된 내용',
+            'userId' => 1,
+        ];
+
+        // when
+        $response = $this->patchJson("/api/posts/{$postId}", $data);
+
+        // then
+        $data = $response->json();
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    public function test_소유자가_다른_포스트는_수정할_수_없다(): void
+    {
+        // given
+        $user = $this->actingAsAuthenticatedUser();
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+            'userId' => 3,
+        ]);
+        $postId = $post->id;
+
         $data = [
             'title' => "수정된 제목",
             'content' => '수정된 내용'
@@ -191,8 +220,7 @@ class PostControllerTest extends TestCase
 
         // then
         $data = $response->json();
-        $response->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $data['code']);
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function test_포스트_삭제(): void

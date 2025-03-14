@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\NotPostOwner;
 use App\Exceptions\PostNotFound;
 use App\Models\Post;
 use App\Requests\Post\PostSearchRequest;
@@ -47,9 +48,13 @@ class PostService
         return $response;
     }
 
-    public function update(string $postId, PostUpdateRequest $request): PostResponse
+    public function update(int $postId, PostUpdateRequest $request): PostResponse
     {
         $post = Post::findOr($postId, fn() => throw new PostNotFound());
+        if ($post->userId != $request->getUserId()) {
+            throw new NotPostOwner();
+        }
+
         $post->update($request->toArray());
         $post->save();
 

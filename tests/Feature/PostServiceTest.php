@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\NotPostOwner;
 use App\Exceptions\PostNotFound;
 use App\Models\Post;
 use App\Requests\Post\PostSearchRequest;
@@ -168,12 +169,14 @@ class PostServiceTest extends TestCase
             'title' => '포스트 제목',
             'content' => '포스트 내용',
             'author' => '포스트 작성자',
+            'userId' => 1,
         ]);
         $postId = $post->id;
 
         $request = new PostUpdateRequest([
             'title' => '수정 제목',
-            'content' => '수정 내용'
+            'content' => '수정 내용',
+            'userId' => 1
         ]);
 
         // when
@@ -191,6 +194,7 @@ class PostServiceTest extends TestCase
         $request = new PostUpdateRequest([
             'title' => '포스트 제목',
             'content' => '포스트 내용',
+            'userId' => 1,
         ]);
         $postId = 9999999;
 
@@ -198,6 +202,28 @@ class PostServiceTest extends TestCase
         $this->assertThrows(function () use ($postId, $request) {
             $this->postService->update($postId, $request);
         }, PostNotFound::class);
+    }
+
+    public function test_소유하지_않은_포스트는_삭제할_수_없다(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+            'userId' => 1,
+        ]);
+        $postId = $post->id;
+        $request = new PostUpdateRequest([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'userId' => 999,
+        ]);
+
+        // expected
+        $this->assertThrows(function () use ($postId, $request) {
+            $this->postService->update($postId, $request);
+        }, NotPostOwner::class);
     }
 
     public function test_포스트_삭제(): void

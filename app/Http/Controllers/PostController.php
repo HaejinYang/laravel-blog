@@ -65,10 +65,10 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PostUpdateFormRequest $formRequest, string $id)
+    public function update(PostUpdateFormRequest $formRequest, int $postId)
     {
         $request = $formRequest->toRequest();
-        $post = $this->postService->update($id, $request);
+        $post = $this->postService->update($postId, $request);
 
         return $post;
     }
