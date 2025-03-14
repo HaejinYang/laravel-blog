@@ -137,9 +137,14 @@ Comment 모델 참고.
 
 ## 20) 댓글 컨트롤러 인증 적용 및 유저 연동
 
+## 21) 인증이 필요한 FormRequest에서 AuthenticatedFormRequest를 상속하도록 리팩토링
+
+인증이 필요한 FormRequest에 validated method를 오버라이딩하여 userId를 추가했음.
+코드 중복 제거를 위해, 이를 AuthenticatedFormRequest로 분리하여, 인증이 필요한 FormRequest는 이 클래스를 상속하도록 변경함.
+
 해야할일
 
-- validated 중복 코드 제거 방법
+- ~~validated 중복 코드 제거 방법~~
 
 # 알아볼거
 

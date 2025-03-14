@@ -3,9 +3,9 @@
 namespace App\Requests\Post;
 
 
-use App\Requests\BaseFormRequest;
+use App\Requests\AuthenticatedFormRequest;
 
-class PostUpdateFormRequest extends BaseFormRequest
+class PostUpdateFormRequest extends AuthenticatedFormRequest
 {
     /**
      * 요청을 인증할지 여부
@@ -24,11 +24,5 @@ class PostUpdateFormRequest extends BaseFormRequest
             'title' => 'required|string|max:255',
             'content' => 'required|string'
         ];
-    }
-
-    public function validated($key = null, $default = null)
-    {
-        // $this->user는 미들웨어 auth:sanctum에 의하여 채워짐
-        return array_merge(parent::validated($key, $default), ['userId' => $this->user()->id]);
     }
 }

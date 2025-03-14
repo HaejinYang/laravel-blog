@@ -2,9 +2,9 @@
 
 namespace App\Requests\Comment;
 
-use App\Requests\BaseFormRequest;
+use App\Requests\AuthenticatedFormRequest;
 
-class CommentUpdateFormRequest extends BaseFormRequest
+class CommentUpdateFormRequest extends AuthenticatedFormRequest
 {
     /**
      * 요청을 인증할지 여부
@@ -23,11 +23,5 @@ class CommentUpdateFormRequest extends BaseFormRequest
             'content' => 'required|string|min:1',
             'password' => 'required|string|min:4',
         ];
-    }
-
-    public function validated($key = null, $default = null)
-    {
-        // $this->user는 미들웨어 auth:sanctum에 의하여 채워짐
-        return array_merge(parent::validated($key, $default), ['userId' => $this->user()->id]);
     }
 }
