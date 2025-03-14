@@ -63,8 +63,13 @@ class PostService
         return $response;
     }
 
-    public function delete(string $postId): void
+    public function delete(int $postId, int $userId): void
     {
+        $post = Post::findOr($postId, fn() => throw new PostNotFound());
+        if ($post->userId != $userId) {
+            throw new NotPostOwner();
+        }
+
         Post::destroy($postId);
     }
 }

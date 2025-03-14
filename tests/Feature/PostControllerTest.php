@@ -223,13 +223,15 @@ class PostControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public function test_포스트_삭제(): void
+    public function test_포스트_소유자가_같으면_삭제할_수_있다(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $post = Post::create([
             'title' => '포스트 제목',
             'content' => '포스트 내용',
             'author' => '포스트 작성자',
+            'userId' => $user->id,
         ]);
         $postId = $post->id;
 
@@ -239,5 +241,24 @@ class PostControllerTest extends TestCase
         // then
         $response->assertStatus(Response::HTTP_OK);
         $this->assertEquals(0, Post::count());
+    }
+
+    public function test_포스트_소유자가_다르면_삭제할_수_없다(): void
+    {
+        // given
+        $user = $this->actingAsAuthenticatedUser();
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+            'userId' => 999,
+        ]);
+        $postId = $post->id;
+
+        // when
+        $response = $this->deleteJson("/api/posts/{$postId}");
+
+        // then
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

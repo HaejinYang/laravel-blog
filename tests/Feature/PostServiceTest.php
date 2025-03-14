@@ -226,20 +226,38 @@ class PostServiceTest extends TestCase
         }, NotPostOwner::class);
     }
 
-    public function test_포스트_삭제(): void
+    public function test_포스트_소유자가_같으면_삭제할_수_있다(): void
     {
         // given
         $post = Post::create([
             'title' => '포스트 제목',
             'content' => '포스트 내용',
             'author' => '포스트 작성자',
+            'userId' => 1,
         ]);
         $postId = $post->id;
 
         // when
-        $this->postService->delete($postId);
+        $this->postService->delete($postId, 1);
 
         // then
         $this->assertNull(Post::find($postId));
+    }
+
+    public function test_포스트_소유자가_다르면_삭제할_수_없다(): void
+    {
+        // given
+        $post = Post::create([
+            'title' => '포스트 제목',
+            'content' => '포스트 내용',
+            'author' => '포스트 작성자',
+            'userId' => 1,
+        ]);
+        $postId = $post->id;
+
+        // expected
+        $this->assertThrows(function () use ($postId) {
+            $this->postService->delete($postId, 9999);
+        }, NotPostOwner::class);
     }
 }

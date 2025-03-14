@@ -7,6 +7,7 @@ use App\Requests\Post\PostStoreFormRequest;
 use App\Requests\Post\PostUpdateFormRequest;
 use App\Responses\PostResponse;
 use App\Services\PostService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PostController extends Controller
@@ -76,9 +77,9 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $postId)
+    public function destroy(Request $request, $postId)
     {
-        $this->postService->delete($postId);
+        $this->postService->delete($postId, $request->user()->id);
 
         return "delete";
     }
