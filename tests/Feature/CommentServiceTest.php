@@ -48,6 +48,7 @@ class CommentServiceTest extends TestCase
                 'password' => '1234',
                 'content' => '테스트 댓글 내용',
                 'postId' => 1,
+                'userId' => 1,
             ]);
         }
         $request = new CommentSearchRequest();
@@ -68,6 +69,7 @@ class CommentServiceTest extends TestCase
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => 1,
         ]);
 
         // when
@@ -101,6 +103,7 @@ class CommentServiceTest extends TestCase
             'content' => '테스트 댓글 내용',
             'password' => '1234',
             'postId' => $post->id,
+            'userId' => 1,
         ]);
 
         // when
@@ -119,6 +122,7 @@ class CommentServiceTest extends TestCase
             'content' => '테스트 댓글 내용',
             'password' => '1234',
             'postId' => 99999,
+            'userId' => 1,
         ]);
 
         // expected
@@ -135,10 +139,12 @@ class CommentServiceTest extends TestCase
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => 1,
         ]);
         $request = new CommentUpdateRequest([
             'content' => '수정 댓글 내용',
             'password' => '1234',
+            'userId' => 1,
         ]);
 
         // when
@@ -156,9 +162,11 @@ class CommentServiceTest extends TestCase
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => 1,
         ]);
         $request = new CommentDeleteRequest([
             'password' => '1234',
+            'userId' => 1,
         ]);
 
         // when
@@ -178,9 +186,11 @@ class CommentServiceTest extends TestCase
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => 1,
         ]);
         $request = new CommentDeleteRequest([
             'password' => '12345',
+            'userId' => 1,
         ]);
 
         // expected

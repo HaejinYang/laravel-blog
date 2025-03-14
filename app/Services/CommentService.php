@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CommentNotFound;
 use App\Exceptions\CommentPasswordNotMatch;
+use App\Exceptions\NotCommentOwner;
 use App\Exceptions\PostNotFound;
 use App\Models\Comment;
 use App\Models\Post;
@@ -72,6 +73,10 @@ class CommentService
 
     public function update(Comment $comment, CommentUpdateRequest $request): CommentResponse
     {
+        if ($comment->userId !== $request->getUserId()) {
+            throw new NotCommentOwner();
+        }
+
         if ($this->passwordEncryptor->check($request->getPassword(), $comment->password) === false) {
             throw new CommentPasswordNotMatch();
         }
@@ -85,6 +90,10 @@ class CommentService
 
     public function delete(Comment $comment, CommentDeleteRequest $request): CommentResponse
     {
+        if ($comment->userId !== $request->getUserId()) {
+            throw new NotCommentOwner();
+        }
+
         if ($this->passwordEncryptor->check($request->getPassword(), $comment->password) === false) {
             throw new CommentPasswordNotMatch();
         }

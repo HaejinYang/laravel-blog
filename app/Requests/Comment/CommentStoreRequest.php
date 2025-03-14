@@ -10,6 +10,15 @@ class CommentStoreRequest extends BaseRequest
     protected string $author;
     protected string $content;
     protected string $password;
+    protected int $userId;
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
 
     /**
      * @return int

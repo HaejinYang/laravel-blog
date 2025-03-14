@@ -5,10 +5,11 @@ use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
+use Tests\TestHelper\AuthHelper;
 
 class CommentControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, AuthHelper;
 
     public function test_포스트_없는_댓글_리스트_조회(): void
     {
@@ -19,6 +20,7 @@ class CommentControllerTest extends TestCase
                 'password' => '1234',
                 'content' => '테스트 댓글 내용',
                 'postId' => 1,
+                'userId' => 1,
             ]);
         }
 
@@ -49,6 +51,7 @@ class CommentControllerTest extends TestCase
                 'password' => '1234',
                 'content' => '테스트 댓글 내용',
                 'postId' => $post->id,
+                'userId' => 1,
             ]);
         }
         // when
@@ -71,6 +74,7 @@ class CommentControllerTest extends TestCase
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => 1,
         ]);
 
         // when
@@ -99,11 +103,12 @@ class CommentControllerTest extends TestCase
     public function test_포스트에_댓글_추가(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $post = Post::create([
             'title' => '테스트 포스트',
             'content' => '테스트 포스트 내용',
             'author' => '테스트 작성자',
-            'userId' => 1,
+            'userId' => $user->id,
         ]);
 
         $request = [
@@ -127,6 +132,7 @@ class CommentControllerTest extends TestCase
     public function test_존재하지_않는_포스트에_댓글_추가는_실패해야함(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $request = [
             'author' => '테스트 작성자',
             'password' => '1234',
@@ -141,14 +147,33 @@ class CommentControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
+    public function test_인증되지_않은_유저는_댓글을_추가할_수_없다(): void
+    {
+        // given
+        $request = [
+            'author' => '테스트 작성자',
+            'password' => '1234',
+            'content' => '테스트 댓글 내용',
+            'postId' => 3,
+        ];
+
+        // when
+        $response = $this->postJson("/api/comments", $request);
+
+        // then
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
     public function test_존재하는_댓글_수정(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $comment = Comment::create([
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => $user->id,
         ]);
         $request = [
             'content' => '수정 댓글 내용',
@@ -165,6 +190,7 @@ class CommentControllerTest extends TestCase
     public function test_존재하지_않는_댓글_수정(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $request = [
             'content' => '수정 댓글 내용',
             'password' => '1234'
@@ -180,11 +206,13 @@ class CommentControllerTest extends TestCase
     public function test_존재하는_댓글_비밀번호_일치하면_삭제성공(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $comment = Comment::create([
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => 1,
         ]);
         $request = [
             'password' => '1234',
@@ -200,11 +228,13 @@ class CommentControllerTest extends TestCase
     public function test_존재하는_댓글_비밀번호_다르면_삭제실패(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $comment = Comment::create([
             'author' => '테스트 작성자',
             'password' => '1234',
             'content' => '테스트 댓글 내용',
             'postId' => 1,
+            'userId' => $user->id,
         ]);
         $request = [
             'password' => '12345',
@@ -220,6 +250,7 @@ class CommentControllerTest extends TestCase
     public function test_존재하지_않는_댓글_삭제_실패해야함(): void
     {
         // given
+        $user = $this->actingAsAuthenticatedUser();
         $request = [
             'content' => '수정 댓글 내용',
         ];

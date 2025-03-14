@@ -8,6 +8,7 @@ class CommentUpdateRequest extends BaseRequest
 {
     protected string $content;
     protected string $password;
+    protected int $userId;
 
     /**
      * @return string
@@ -15,5 +16,13 @@ class CommentUpdateRequest extends BaseRequest
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 }
