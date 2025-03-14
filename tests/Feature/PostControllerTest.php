@@ -27,6 +27,7 @@ class PostControllerTest extends TestCase
             'title' => '포스트 제목',
             'content' => '포스트 내용',
             'author' => '포스트 작성자',
+            'userId' => 1,
         ]);
 
         // when
@@ -44,9 +45,10 @@ class PostControllerTest extends TestCase
         $postCount = 5;
         collect(range(1, $postCount))->each(function ($i) {
             Post::create([
-                'title' => '포스트 제목 {$i}',
-                'content' => '포스트 내용 {$i}',
-                'author' => '포스트 작성자 {$i}',
+                'title' => "포스트 제목 {$i}",
+                'content' => "포스트 내용 {$i}",
+                'author' => "포스트 작성자 {$i}",
+                'userId' => "{$i}"
             ]);
         });
 
@@ -66,6 +68,7 @@ class PostControllerTest extends TestCase
             'title' => '포스트 제목',
             'content' => '포스트 내용',
             'author' => '포스트 작성자',
+            'userId' => 1,
         ]);
         $id = $post->id;
 

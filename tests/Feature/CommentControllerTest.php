@@ -40,6 +40,7 @@ class CommentControllerTest extends TestCase
             'title' => '테스트 포스트',
             'content' => '테스트 포스트 내용',
             'author' => '테스트 작성자',
+            'userId' => 1,
         ]);
 
         for ($i = 0; $i < 3; $i++) {
@@ -102,6 +103,7 @@ class CommentControllerTest extends TestCase
             'title' => '테스트 포스트',
             'content' => '테스트 포스트 내용',
             'author' => '테스트 작성자',
+            'userId' => 1,
         ]);
 
         $request = [
