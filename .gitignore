@@ -24,3 +24,5 @@ yarn-error.log
 /.zed
 /mysqldata
 *.log
+prometheus/data
+grafana/data

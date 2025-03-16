@@ -142,9 +142,18 @@ Comment 모델 참고.
 인증이 필요한 FormRequest에 validated method를 오버라이딩하여 userId를 추가했음.
 코드 중복 제거를 위해, 이를 AuthenticatedFormRequest로 분리하여, 인증이 필요한 FormRequest는 이 클래스를 상속하도록 변경함.
 
+## 22) 모니터링 적용
+
+- prometheus, grafana, node_exporter를 이용하여 모니터링 세팅
+- TODO: 라라벨 자체의 데이터도 적용해볼 필요가 있음.
+
 해야할일
 
-- ~~validated 중복 코드 제거 방법~~
+- 공식 문서 한 번 쭉 읽어보면서 알아볼거 정해보기
+    - API 문서 필요
+    - testing
+- 모니터링 적용
+-
 
 # 알아볼거
 
