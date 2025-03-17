@@ -4,7 +4,7 @@ FROM php:8.2-fpm-alpine as app
 # 기본 WORKDIR: /var/www/html
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions pdo pdo_mysql pcntl
+RUN install-php-extensions pdo pdo_mysql pcntl redis
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 

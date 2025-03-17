@@ -26,3 +26,4 @@ yarn-error.log
 *.log
 prometheus/data
 grafana/data
+/redis/data

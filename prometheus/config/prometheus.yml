@@ -18,3 +18,14 @@ scrape_configs:
       - targets: [ 'prometheus:9090', 'node_exporter:9100' ]
         labels:
           service: 'monitor'
+
+  - job_name: 'laravel-app'
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    scheme: 'http'
+
+    static_configs:
+      - targets: [ 'web:80' ]
+        labels:
+          service: 'laravel-app'

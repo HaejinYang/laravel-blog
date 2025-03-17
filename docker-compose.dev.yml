@@ -31,7 +31,18 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
 
   # redis
-  # 아직 필요하지 않음
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "${REDIS_OUTER_PORT}:${REDIS_INNER_PORT}"
+    volumes:
+      - ./redis/data:/data
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_INNER_PORT}
+    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
 
   # monitor
   prometheus:
