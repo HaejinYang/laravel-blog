@@ -1,165 +1,115 @@
 # 라라벨 블로그
 
-라라벨 12 문서를 보면서, 블로그를 만든다.
+라라벨 12 문서를 참고하여 블로그를 개발한다.
 
-# 1. 라라벨 설치하기
+# 개발 내역
 
-php, composer 등 설치 방법 생략
+## 개발 환경 구축
 
-```bash
-composer global require laravel/installer
-laravel new laravel-blog
+- 도커 컴포즈(Docker Compose)를 사용해 Nginx, PHP-FPM, MySQL을 구성하여 개발 환경을 구축함.
+- 모니터링을 위해 Prometheus, Grafana, Node Exporter, Redis를 도커 컴포즈에 추가함.
+- 라라벨 12 버전을 선택하여 프로젝트를 진행함.
+
+## 구현 내용
+
+- 게시글 CRUD
+- 댓글 CRUD
+- 인증 기능
+
+각각의 기능 구현에 초점을 맞추기보다는 유지보수가 용이한 구조를 고민하면서 개발했다.
+특히 다음과 같은 부분에 신경을 썼다.
+
+### 요청 전처리
+
+컨트롤러에서 들어오는 요청을 효과적으로 전처리하는 방법을 고민했다.
+서비스 레이어에서는 모든 검증 및 전처리가 끝난 요청을 받아 사용하는 것이 이상적이라고 판단했기 때문이다.
+
+구현 전, 목표한 코드 구조는 다음과 같았다.
+
+```php
+public function store(PostStoreFormRequest $formRequest)
+{
+    $request = $formRequest->toRequest(); // 이 메서드를 호출하면, 검증이 완료된 요청 클래스가 반환됨.
+    $post = $this->postService->store($request); // 서비스에서는 FormRequest가 아닌 별도의 요청 클래스를 사용함.
+
+    return new PostResponse($post);
+}
 ```
 
-# 2. 개발환경 구축
+이를 위해 컨트롤러에서는 `FormRequest`를 사용하고, 서비스 레이어에서는 `FormRequest`를 변환한 요청 전용 클래스를 사용하는 구조를 설계했다.
+프로젝트의 `app/Requests` 디렉터리에 `BaseFormRequest`와 `BaseRequest`를 정의하여 사용하고 있다.
 
-도커 기반으로 개발 환경 구축. nginx, php-fpm, mysql
-[참고링크](https://www.youtube.com/watch?v=qv-P_rPFw4c)
+- `BaseFormRequest`는 `FormRequest`를 상속받아, 기본 기능을 유지하면서 `toRequest()` 메서드를 추가함.
+- `toRequest()`는 요청 데이터를 적절한 요청 DTO로 변환하여 반환함.
+- `FormRequest`에서 어떤 요청 DTO로 변환할지 자동으로 결정하는 방법을 고민함. PHP는 C++처럼 제네릭을 지원하지 않기 때문에, 단순한 네이밍 규칙을 적용함.
+    - 예: `PostStoreFormRequest` → `PostStoreRequest`
 
-# 3. 블로그 기능 추가
+변환 과정에서 리플렉션을 활용하여 `BaseRequest`가 `BaseFormRequest`를 인자로 받아 요청 DTO로 변환하도록 구현했다.
+또한, 기본값을 설정할 수 있는 구조를 추가하여 유연성을 높였다.
 
-블로그 기능 추가하면서, 요청, 응답, 예외 처리도 같이
+현재 고민하는 점은 `FormRequest`에서 DTO로 변환하는 로직을 자동화하는 것이다.
+거의 모든 변환 로직이 유사하므로, `FormRequest`의 `validated()` 메서드를 오버라이드하는 방식으로 해결할 수 있을지 검토 중이다.
 
-## 1) 포스트 조회
+### 응답과 예외처리
 
-- 포스트 리소스 컨트롤러 생성 `php artisan make:controller PostController --resource`
+응답의 일관성을 유지하는 것이 중요하다고 생각했다.
+이를 위해 예외 발생 시에도 일관된 응답을 제공하는 구조를 설계했다.
 
-- 포스트 모델과 마이그레이션 생성 `php artisan make:model Post --migration`
+목표한 코드는 다음과 같다.
 
-- 포스트 응답클래스 생성 `php artisan make:resource PostResource`
+```php
+public function store(PostStoreFormRequest $formRequest)
+{
+    $request = $formRequest->toRequest();
+    $post = $this->postService->store($request);
 
-- 포스트 테스트 생성 `php artisan make:test PostTest`
+    return new PostResponse($post); // Post를 인자로 주어 응답 클래스를 리턴함
+}
+```
 
-- 테스트를 위해 .env.testing 사용. php artisan test가 .env.testing을 먼저 인식함.
+여기서 `PostResponse`는 Model(Post)을 인자로 받아 JSON 응답을 자동으로 생성하는 클래스이다.
+이 과정은 비교적 간단했으며, `JsonSerializable` 인터페이스를 구현하여 리플렉션을 활용하는 방식으로 해결했다.
 
-- 테스트엔 RefreshDatabase 트레잇을 사용하고(매 테스트마다 디비를 리셋함)
-  속도를 위해 테스트 디비로 sqlite의 :memory:를사용
+예외 처리는 응답 처리보다 까다로웠다. 라라벨의 기본 예외와 애플리케이션에서 정의한 예외를 구분하여 처리할 필요가 있었다.
+이를 해결하기 위해 `Exception`을 상속하는 `BaseException`을 만들고, 애플리케이션의 모든 예외가 이를 상속하도록 설계했다.
+또한, `ErrorResponse`라는 전용 에러 응답 클래스를 만들어, 예외 발생 시 항상 이 클래스를 사용하여 응답을 내려주도록 했다.
 
-## 2) 응답 및 예외
+라라벨의 예외 역시 `Exception`을 상속하고 있었지만, 라라벨 기본 예외와 애플리케이션 예외를 명확하게 구분하기 위해 `BaseException`을 추가했다.
 
-- 공용으로 사용할 예외, 에러 응답 상위 클래스 추가하고 적용.
+이와 함께, 라라벨의 기본 예외도 `ErrorResponse`로 변환하여 클라이언트에 일관된 형식으로 응답을 제공하도록 구현했다.
 
-## 3) 포스트 서비스 추가하고 글 조회 API에 새로운 응답과 예외 추가함.
+### 테스트 코드
 
-## 4) BaseResponse 추가하여 JSON 직렬화 자동화
+유닛 테스트에는 익숙하지 않다. 기존에는 포스트맨(Postman)으로 API를 테스트하거나, 자동화된 테스트를 포스트맨이나 Apache JMeter로 작성하여 사용했다.
+이번 기회에 테스트 코드를 작성하며, 테스트 코드의 필요성과 유용성을 직접 경험하고자 했다.
 
-- BaseResponse 클래스 생성 및 JsonSerializable 구현
-- Reflection을 활용하여 객체 속성을 자동으로 직렬화하도록 처리
-- 기존 응답 클래스를 BaseResponse를 상속하도록 변경
-- 중복된 jsonSerialize 구현 코드 제거
+처음에는 테스트 코드 작성이 지루하게 느껴졌다.
+게시글과 댓글 기능을 구현할 때는 테스트 코드의 필요성에 대한 의구심이 있었다.
 
-## 5) web route에서 api route로 교체
+그러나 사용자 인증 기능을 추가하면서 생각이 바뀌었다.
+인증과 연동된 코드가 기존 기능에 추가되면서, 처음부터 수작업으로 모든 기능을 다시 테스트하는 것이 막막하게 느껴졌다.
 
-- Sanctum이 같이 설치되었는데, 일단은 사용안함
-- 경로가 /posts -> /api/posts로 일괄적으로 /api가 붙게됨
+테스트 코드가 있으니, 자동으로 테스트를 실행하고 실패한 부분을 즉시 확인할 수 있었다.
+이를 통해 오류가 발생한 부분만 수정하면 되었고, 테스트의 가치를 실감했다.
 
-## 6) 포스트 생성 기능 추가
+기존 방식대로 포스트맨을 이용했다면 테스트가 너무 지지부진했을 것이다.
+JMeter 같은 자동화 도구를 사용했다면, 문제가 발생한 API는 파악할 수 있었겠지만,
+어떤 상황에서 문제가 발생했는지, 어떤 서비스가 호출되었는지를 일일이 분석해야 했을 것이다.
 
-- 포스트 생성 API 및 서비스 추가
-- 요청 인자 검증 후 타입 재지정을 위한 PostStoreRequest 추가
+### AI의 활용
 
-## 7) BaseRequest 도입하여 요청 클래스 중복 코드 제거
+이번 프로젝트에서는 AI를 적극적으로 활용했다. 전체적인 구조 설계는 직접 진행했지만, 코드 생성 작업은 AI의 도움을 많이 받았다.
 
-- PostStoreRequest와 유사한 Request 클래스에서 반복될 변환 로직을 BaseRequest로 추출
-- 공통 변환 로직을 BaseRequest에서 처리하여 코드 중복 제거
-- 모든 Request 클래스가 BaseRequest를 상속하도록 변경하여 일관성 유지
+예를 들어, `BaseFormRequest`에서 `BaseRequest`로 변환할 때, 네이밍 규칙을 적용하는 방식을 직접 정의했지만,
+이름 비교를 위해 `str_ends_with()` 함수를 호출하는 등의 코드 작성은 AI에게 맡겼다.
 
-## 8) FormRequest 검증 실패 시 커스텀 ErrorResponse 반환
+이 방식은 예상보다 훨씬 효율적이었다.
+리플렉션을 활용한 코드도 개념적인 부분은 직접 설계했지만, 실제 구현 과정에서는 AI의 코드 생성 기능을 적극 활용했다.
 
-- 기본 422 응답 대신 앱에서 정의한 ErrorResponse 형식으로 검증 실패 응답 처리
-- bootstrap.app에서 withExceptions에 정의함.
-- 일관된 에러 응답 포맷을 유지
+최근 AI가 개발자를 대체할 수 있을지에 대한 논의가 활발하다. 완전히 대체될지는 모르겠지만, 프로그래머로서 생존하려면 AI 활용 능력이 점점 더 중요해지고 있음을 실감했다.
 
-## 9) AppException 이름을 BaseException으로 변경
+# 참고
 
-프로젝트에서 사용하는 최상위 클래스들은 이름이 모두 Base... 로 시작한다.
-
-## 10) FormRequest에서 DTO 변환 로직 자동화
-
-- BaseFormRequest에서 DTO 클래스를 자동으로 유추하도록 개선
-- 기존 `toDto()` 메서드에서 별도 DTO 클래스를 지정할 필요 없음
-- 네이밍 패턴을 기반으로 DTO 클래스를 감지하도록 구현
-
-## 11) BaseRequest 클래스에 기본값 적용 가능하도록 변경
-
-FormRequest 클래스를 Request 클래스로 변환할 때, 요청으로 전달되지 않은 인자에 대한 기본값을 설정할 필요가 있음.
-BaseRequest 클래스를 상속받는 클래스에서 기본값을 적용할 수 있는 구조를 추가함.
-
-## 12) 포스트 리스트 조회에 페이지네이션 적용
-
-EloquentOrm의 `Model::pageinate()` 메서드를 사용하여 페이지네이션을 적용함.
-페이지 번호, 페이지 크기, 오름차순&내림차순 정렬을 적용함.
-
-## 13) 댓글 모델 정의하고 댓글 조회 API 추가
-
-- 댓글 모델과 마이그레이션 생성
-- 댓글 리소스 컨트롤러 생성
-- 댓글 조회 API 추가
-- 댓글 조회 API 테스트 추가. assertThrow를 활용하여 CommentService의 getOne 메서드 예외 처리 테스트
-
-## 14) 포스트 수정 API 추가
-
-- 기존 포스트를 찾고, 찾지 못하면 PostNotFound 예외를 던짐
-- 찾으면, 업데이트하고, save하고, 응답함
-
-# 4. 중간 점검
-
-- 블로그 포스트 리스트 조회, 조회, 생성 API 및 테스트
-- 요청 처리를 위해 FormRequest와 BaseRequest 클래스 적용
-- 응답 처리를 위해 BaseResponse 클래스 적용
-- 예외 처리를 위해 BaseException와 ErroResponse 클래스 적용
-
-## 15) Post 관련 FormRequest, Request 따로 분리. Comment도 마찬가지로
-
-## 16) 모델 프로퍼티 이름을 카멜 케이스로 인식해주는 Attribute 추가
-
-Comment 모델에서 포스트 id를 post_id로 갖고 있음. 이로 인하여 FormRequest, Request 등
-여러 관련 클래스의 프로퍼티 이름이 post_id만 스네이크 케이스고, 나머지는 카멜 케이스임.
-이를 해결하기 위해, 모델의 프로퍼티 이름을 카멜 케이스로 인식해주는 Attribute를 추가함.
-Comment 모델 참고.
-
-## 17) PasswordEncryptor 추가 및 Comment 모델 비밀번호 처리 개선
-
-- PasswordEncryptor 서비스 추가 (비밀번호 암호화 전담)
-- Comment 모델에 `setPasswordAttribute` Mutator를 사용하여 password 자동 해싱 적용
-- Comment 수정 및 삭제 시, 입력된 password가 기존 hash와 일치하는지 검증 로직 추가
-
-## 18) Sanctum을 이용한 인증 API 추가
-
-- Sanctum을 이용하여 가입, 로그인, 로그아웃 같은 인증 API 추가
-- 토큰 발행 및 검증 진행
-
-## 19) 포스트 컨트롤러 인증 적용 및 유저 연동
-
-- 포스트 컨트롤러에 `auth:sanctum` 미들웨어 적용
-- 포스트 모델과 포스트 생성 API에 유저 연동 (`user_id` 추가)
-- 테스트 코드에서 인증된 유저를 제공하는 `AuthHelper` 트레잇 추가
-
-## 20) 댓글 컨트롤러 인증 적용 및 유저 연동
-
-## 21) 인증이 필요한 FormRequest에서 AuthenticatedFormRequest를 상속하도록 리팩토링
-
-인증이 필요한 FormRequest에 validated method를 오버라이딩하여 userId를 추가했음.
-코드 중복 제거를 위해, 이를 AuthenticatedFormRequest로 분리하여, 인증이 필요한 FormRequest는 이 클래스를 상속하도록 변경함.
-
-## 22) 모니터링 적용
-
-- prometheus, grafana, node_exporter를 이용하여 모니터링 세팅
-- TODO: 라라벨 자체의 데이터도 적용해볼 필요가 있음.
-
-해야할일
-
-- 공식 문서 한 번 쭉 읽어보면서 알아볼거 정해보기
-    - API 문서 필요
-    - testing
-- 모니터링 적용
--
-
-# 알아볼거
-
-- phpunit에서 컨트롤러 호출하는 원리
-- phpunit에서 use RefreshDatabase; 좀더 자세히
-- php의 static late binding과 reflection
-- API 문서 생성
-- 암호화 알고리즘, 해시, 내가 쓴 Hash::make의 기본 알고리즘?
-- use HasApiTokens, HasFactory, Notifiable;
+- [라라벨 12 문서](https://laravel.com/docs/12.x)
+- [요청, 응답, 예외처리](https://www.inflearn.com/course/%ED%98%B8%EB%8F%8C%EB%A7%A8-%EC%9A%94%EC%A0%88%EB%B3%B5%ED%86%B5-%EA%B0%9C%EB%B0%9C%EC%87%BC/dashboard)
+- [nginx,php-fpm,mysql 세팅](https://www.youtube.com/watch?v=qv-P_rPFw4c)
